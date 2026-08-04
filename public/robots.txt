@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap:https://a-n-o-d-e-r.github.io/blog/sitemap-index.xml

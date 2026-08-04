@@ -1,0 +1,76 @@
+---
+title: "Getting Started with Astro"
+description: "Learn how to build fast websites with Astro, the modern static site generator"
+date: 2026-08-01
+tags: ["astro", "web-dev", "tutorial"]
+category: "tutorial"
+draft: false
+---
+
+# Getting Started with Astro
+
+Astro is a modern static site generator that helps you build fast, content-focused websites. It uses a unique islands architecture that minimizes JavaScript by default.
+
+## Why Astro?
+
+Astro offers several compelling benefits:
+
+- **Fast by default**: Ships zero JavaScript unless you need it
+- **Modern DX**: Write components in React, Vue, Svelte, or vanilla HTML
+- **Static-first**: Perfect for blogs, docs, and marketing sites
+- **Flexible**: Add dynamic features only where needed
+
+## Key Features
+
+### Islands Architecture
+
+The islands architecture allows you to use interactive components only where needed:
+
+```tsx
+// This only loads JavaScript where ThemeToggle is used
+<ThemeToggle client:load />
+```
+
+### Content Collections
+
+Type-safe content management with Zod validation:
+
+```ts
+const blog = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    tags: z.array(z.string())
+  })
+});
+```
+
+### Built-in Optimizations
+
+Astro automatically optimizes:
+
+- Images with the `<Image>` component
+- Fonts with strategic preloading
+- CSS with automatic inlining and minification
+- JavaScript with code splitting
+
+## Getting Started
+
+Install Astro and create your first project:
+
+```bash
+npm create astro@latest
+cd my-blog
+npm run dev
+```
+
+Visit `http://localhost:4321` to see your site.
+
+## Next Steps
+
+- Explore the [Astro docs](https://docs.astro.build)
+- Try adding React or Vue components
+- Deploy to Cloudflare Pages or Netlify
+
+Astro makes building fast websites enjoyable. Give it a try!

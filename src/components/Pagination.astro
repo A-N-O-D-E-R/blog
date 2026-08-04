@@ -1,0 +1,28 @@
+---
+interface Props {
+  page: number;
+  totalPages: number;
+}
+
+const { page, totalPages } = Astro.props;
+---
+
+<nav class="flex justify-center gap-4 mt-8">
+  {page > 1 && (
+    <a
+      href={`/blog?page=${page - 1}`}
+      class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+    >
+      ← Prev
+    </a>
+  )}
+  <span class="px-4 py-2">Page {page} of {totalPages}</span>
+  {page < totalPages && (
+    <a
+      href={`/blog?page=${page + 1}`}
+      class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+    >
+      Next →
+    </a>
+  )}
+</nav>

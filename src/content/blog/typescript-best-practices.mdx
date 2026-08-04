@@ -1,0 +1,123 @@
+---
+title: "TypeScript Best Practices"
+description: "Level up your TypeScript skills with these proven patterns and techniques"
+date: 2026-07-25
+tags: ["typescript", "javascript", "best-practices"]
+category: "programming"
+draft: false
+---
+
+# TypeScript Best Practices
+
+TypeScript adds type safety to JavaScript, but using it effectively requires understanding best practices and common patterns.
+
+## Prefer Type Inference
+
+Let TypeScript infer types when possible:
+
+```ts
+// Good: TypeScript infers string[]
+const tags = ['astro', 'react', 'typescript'];
+
+// Unnecessary: Explicit type adds noise
+const tags: string[] = ['astro', 'react', 'typescript'];
+```
+
+## Use Strict Mode
+
+Always enable strict mode in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "strict": true
+  }
+}
+```
+
+This enables:
+- `strictNullChecks`
+- `strictFunctionTypes`
+- `strictBindCallApply`
+- `strictPropertyInitialization`
+
+## Avoid `any`
+
+Use `unknown` instead of `any` for type-safe error handling:
+
+```ts
+// Bad
+function parseJSON(json: string): any {
+  return JSON.parse(json);
+}
+
+// Good
+function parseJSON(json: string): unknown {
+  return JSON.parse(json);
+}
+
+const result = parseJSON('{"name": "Alice"}');
+// Must type-check before use
+if (typeof result === 'object' && result !== null) {
+  // Safe to access properties
+}
+```
+
+## Type Guards
+
+Create type guards for runtime type checking:
+
+```ts
+interface User {
+  name: string;
+  email: string;
+}
+
+function isUser(value: unknown): value is User {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'name' in value &&
+    'email' in value
+  );
+}
+```
+
+## Discriminated Unions
+
+Use discriminated unions for type-safe state management:
+
+```ts
+type Result<T> =
+  | { success: true; data: T }
+  | { success: false; error: string };
+
+function handleResult<T>(result: Result<T>) {
+  if (result.success) {
+    // TypeScript knows result.data exists
+    console.log(result.data);
+  } else {
+    // TypeScript knows result.error exists
+    console.error(result.error);
+  }
+}
+```
+
+## Utility Types
+
+Leverage built-in utility types:
+
+```ts
+// Pick subset of properties
+type UserPreview = Pick<User, 'name' | 'email'>;
+
+// Make all properties optional
+type PartialUser = Partial<User>;
+
+// Make all properties readonly
+type ReadonlyUser = Readonly<User>;
+```
+
+## Conclusion
+
+TypeScript's type system is powerful when used correctly. These patterns help write safer, more maintainable code.

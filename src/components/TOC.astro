@@ -1,0 +1,21 @@
+---
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+const toc = headings.filter(h => h.depth <= 3);
+---
+
+{toc.length > 0 && (
+  <nav class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 mb-8">
+    <h2 class="text-sm font-bold mb-2">Table of Contents</h2>
+    <ul class="text-sm space-y-1">
+      {toc.map(h => (
+        <li style={`margin-left: ${(h.depth - 2) * 1}rem`}>
+          <a href={`#${h.slug}`} class="hover:text-zinc-600 dark:hover:text-zinc-300">{h.text}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}

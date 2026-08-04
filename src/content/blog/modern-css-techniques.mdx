@@ -1,0 +1,90 @@
+---
+title: "Modern CSS Techniques for 2026"
+description: "Explore the latest CSS features and best practices for building responsive layouts"
+date: 2026-07-28
+tags: ["css", "web-dev", "design"]
+category: "design"
+draft: false
+---
+
+# Modern CSS Techniques for 2026
+
+CSS has evolved dramatically in recent years. Modern browsers now support powerful features that simplify responsive design and improve developer experience.
+
+## Container Queries
+
+Container queries let components respond to their container's size, not just the viewport:
+
+```css
+.card {
+  container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+  .card-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+  }
+}
+```
+
+## CSS Nesting
+
+Native CSS nesting reduces repetition:
+
+```css
+.button {
+  background: blue;
+
+  &:hover {
+    background: darkblue;
+  }
+
+  &.primary {
+    font-weight: bold;
+  }
+}
+```
+
+## Logical Properties
+
+Use logical properties for better internationalization:
+
+```css
+/* Instead of margin-left */
+margin-inline-start: 1rem;
+
+/* Instead of padding-top */
+padding-block-start: 2rem;
+```
+
+## CSS Grid Subgrid
+
+Subgrid allows nested grids to inherit parent grid tracks:
+
+```css
+.parent {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.child {
+  display: grid;
+  grid-template-columns: subgrid;
+}
+```
+
+## Color Functions
+
+Modern color functions provide better control:
+
+```css
+:root {
+  --primary: oklch(60% 0.15 240);
+  --hover: oklch(from var(--primary) calc(l - 10%) c h);
+}
+```
+
+## Conclusion
+
+Modern CSS is more powerful and expressive than ever. These techniques reduce JavaScript dependencies and improve performance.

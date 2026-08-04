@@ -1,0 +1,135 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import MDXEditorComponent from '@/components/MDXEditorComponent.tsx';
+
+const defaultMarkdown = `---
+title: "New Post"
+description: "Post description"
+date: ${new Date().toISOString().split('T')[0]}
+tags: []
+draft: true
+---
+
+# Your Title
+
+Start writing...
+`;
+---
+
+<BaseLayout title="New Post" description="Create a new blog post">
+  <h1 class="text-4xl font-bold mb-8">Create New Post</h1>
+
+  <div class="mb-4">
+    <input type="file" id="file-input" accept=".mdx,.md" class="hidden" />
+    <button
+      id="load-btn"
+      class="px-4 py-2 mb-4 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+    >
+      📂 Load File
+    </button>
+    <span id="current-file" class="ml-4 text-sm text-zinc-500"></span>
+  </div>
+
+  <div id="editor-container" class="mb-4">
+    <MDXEditorComponent client:only="react" markdown={defaultMarkdown} onChange={(md) => {}} />
+  </div>
+
+  <div class="mt-8 flex gap-4">
+    <button
+      id="save-btn"
+      class="px-4 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-black rounded-lg hover:opacity-90"
+    >
+      💾 Save
+    </button>
+    <a
+      href="/blog"
+      class="px-4 py-2 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+    >
+      Cancel
+    </a>
+  </div>
+</BaseLayout>
+
+<script>
+  let currentMarkdown = '';
+  let fileHandle: any = null; // File System Access API handle
+
+  // ponytail: direct FS access when available, fallback to download
+  const supportsFileSystemAccess = 'showSaveFilePicker' in window;
+
+  function updateEditorContent(markdown: string) {
+    currentMarkdown = markdown;
+    const event = new CustomEvent('mdx-editor-update', { detail: markdown });
+    window.dispatchEvent(event);
+  }
+
+  // Load file
+  document.getElementById('load-btn')?.addEventListener('click', async () => {
+    if (supportsFileSystemAccess) {
+      try {
+        [fileHandle] = await (window as any).showOpenFilePicker({
+          types: [{
+            description: 'MDX Files',
+            accept: { 'text/markdown': ['.mdx', '.md'] }
+          }],
+        });
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        updateEditorContent(content);
+        (document.getElementById('current-file') as HTMLElement).textContent = file.name;
+      } catch (e) {
+        // User cancelled
+      }
+    } else {
+      document.getElementById('file-input')?.click();
+    }
+  });
+
+  // Fallback file input
+  document.getElementById('file-input')?.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const content = await file.text();
+    updateEditorContent(content);
+    (document.getElementById('current-file') as HTMLElement).textContent = file.name;
+  });
+
+  // Save file
+  document.getElementById('save-btn')?.addEventListener('click', async () => {
+    if (supportsFileSystemAccess) {
+      try {
+        if (!fileHandle) {
+          fileHandle = await (window as any).showSaveFilePicker({
+            suggestedName: 'post.mdx',
+            types: [{
+              description: 'MDX Files',
+              accept: { 'text/markdown': ['.mdx'] }
+            }],
+          });
+        }
+        const writable = await fileHandle.createWritable();
+        await writable.write(currentMarkdown);
+        await writable.close();
+        (document.getElementById('current-file') as HTMLElement).textContent = fileHandle.name;
+      } catch (e) {
+        // User cancelled
+      }
+    } else {
+      const filename = prompt('Filename (without .mdx):') || 'post';
+      const blob = new Blob([currentMarkdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${filename}.mdx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  });
+
+  // Listen for editor changes
+  window.addEventListener('message', (e) => {
+    if (e.data?.type === 'mdx-editor-change') {
+      currentMarkdown = e.data.markdown;
+    }
+  });
+</script>

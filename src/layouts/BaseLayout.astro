@@ -1,0 +1,41 @@
+---
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import SEO from '@/components/SEO.astro';
+import QueryProvider from '@/components/QueryProvider.tsx';
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+const isProd = import.meta.env.PROD;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <SEO title={title} description={description} image={image} />
+    {isProd && <link href="/_pagefind/pagefind-ui.css" rel="stylesheet" />}
+    {isProd && <script is:inline src="/_pagefind/pagefind-ui.js"></script>}
+  </head>
+  <body class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
+    <script is:inline>
+      const theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    </script>
+    <Header />
+    <QueryProvider client:only="react">
+      <main class="container mx-auto px-4 py-8">
+        <slot />
+      </main>
+    </QueryProvider>
+    <Footer />
+  </body>
+</html>
