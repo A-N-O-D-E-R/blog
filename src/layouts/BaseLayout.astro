@@ -20,10 +20,10 @@ const isProd = import.meta.env.PROD;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href={`${import.meta.env.BASE_URL}/favicon.ico`} />
     <SEO title={title} description={description} image={image} />
-    {isProd && <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />}
-    {isProd && <script is:inline src="/pagefind/pagefind-ui.js"></script>}
+    {isProd && <link href={`${import.meta.env.BASE_URL}/pagefind/pagefind-ui.css`} rel="stylesheet" />}
+    {isProd && <script is:inline src={`${import.meta.env.BASE_URL}/pagefind/pagefind-ui.js`}></script>}
   </head>
   <body class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
     <script is:inline>

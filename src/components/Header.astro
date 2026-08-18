@@ -4,9 +4,9 @@ import ThemeToggle from './ThemeToggle';
 
 <header class="border-b border-zinc-200 dark:border-zinc-800">
   <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
-    <a href="/" class="text-xl font-bold">anoder</a>
+    <a href={import.meta.env.BASE_URL} class="text-xl font-bold">anoder</a>
     <div class="flex gap-6 items-center">
-      <a href="/blog" class="hover:text-zinc-600 dark:hover:text-zinc-300">Blog</a>
+      <a href={`${import.meta.env.BASE_URL}/blog`} class="hover:text-zinc-600 dark:hover:text-zinc-300">Blog</a>
       <a href="https://a-n-o-d-e-r.github.io/personal-site-web" class="hover:text-zinc-600 dark:hover:text-zinc-300">About</a>
       <ThemeToggle client:load />
     </div>
