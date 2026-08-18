@@ -31,7 +31,7 @@ const isProd = import.meta.env.PROD;
       document.documentElement.classList.toggle('dark', theme === 'dark');
     </script>
     <Header />
-    <QueryProvider client:only="react">
+    <QueryProvider client:load>
       <main class="container mx-auto px-4 py-8">
         <slot />
       </main>
