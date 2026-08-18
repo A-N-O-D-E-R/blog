@@ -82,7 +82,7 @@ export default function BlogList({ initialPosts, postsPerPage = 12 }: Props) {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {displayedPosts.map(post => (
           <article key={post.id} className="border border-zinc-200 dark:border-zinc-800 rounded-lg p-6 hover:shadow-lg transition">
-            <a href={`/blog/${post.id}`}>
+            <a href={`${import.meta.env.BASE_URL}/blog/${post.id}`}>
               <h3 className="text-xl font-bold mb-2">{post.data.title}</h3>
               <p className="text-zinc-600 dark:text-zinc-400 mb-4">{post.data.description}</p>
               <div className="text-sm text-zinc-500">
