@@ -22,8 +22,8 @@ const isProd = import.meta.env.PROD;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <SEO title={title} description={description} image={image} />
-    {isProd && <link href="/_pagefind/pagefind-ui.css" rel="stylesheet" />}
-    {isProd && <script is:inline src="/_pagefind/pagefind-ui.js"></script>}
+    {isProd && <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />}
+    {isProd && <script is:inline src="/pagefind/pagefind-ui.js"></script>}
   </head>
   <body class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
     <script is:inline>
