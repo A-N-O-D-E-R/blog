@@ -1,0 +1,105 @@
+---
+title: "Automated reporting with 100% data certenty"
+description: "I would not let my chatbot do the math"
+date: 2026-08-01
+tags: ["AI", "SpringBoot", "Exploration"]
+category: "project"
+draft: true
+---
+
+This project start with a anoying truth, each time I ask my chatbot to show me in graph some KPI, it would happily answer. Confidently. With specific numbers. Numbers it invented on the spot.
+This is the classic hallucination trap, and it's especially dangerous with data questions, because a fabricated chart looks exactly as trustworthy as a real one. There's no visual tell for "I made this up." A bar chart with wrong numbers is indistinguishable from a bar chart with right numbers. Until someone point out the incoherance. 
+
+The answer is simple, do not let the chatbot do the math, there is better tools for that. 
+
+So here's the experiment: what if the LLM was never allowed to compute the numbers at all? What if a human pre-verifies the dataset with actual SQL, Superset renders the chart from that verified query, and the LLM's only job is to figure out which chart answers the question and drop it into the conversation?
+
+In other words: humans own the data layer, the AI owns the retrieval and framing.
+In this blog I will explain how we done that. 
+
+# The protagonist. 
+
+Every good story begin with an introduction of the protagonist. so here there are : 
+
+1. Superset 
+
+Apache Superset is an opensource BI software, with rich feature and api. It connects to a SQL database, run a query, and render the chart. The chart is a direct rendering of the query result, nothing more. If the SQL is right, the chart is right. That's the whole point of putting it in the loop.
+
+2. Spring AI 
+
+Spring AI is the Java framework I use to talk to the LLM providers (Bedrock, Anthropic, OpenAI) from one codebase, and to wire tool-calling: the model decide it need a tool, Spring AI run it, the result go back in the conversation. My backend is built on top of it and exposes an OpenAI-compatible `/v1/chat/completions` endpoint, so anything that speaks to OpenAI can talk to it without knowing the difference.
+
+3. open WebUI
+
+open WebUI is the chat frontend. It doesn't know or care that backend isn't the real OpenAI API, it just points `OPENAI_API_BASE_URL` at it. This is where the human types the question and see the answer, chart included.
+
+4. Postgresql 
+
+Postgres (with the pgvector extension) is the shared storage. open WebUI keeps its chat history there, the backends keeps its knowledge base embeddings there. Superset will read from its own datasource, not this one, it's a different database entirely: the one holding the actual KPI data.
+
+
+# Context 
+
+I have missing something on purpose. here I will not use all the functionality of OpenWebUi, I will use my spring back-end as the agglomerator (tools, models, ...) because : 
+1. I <3 Java
+2. I want to plug my AI on the my ecosystem (it is java)
+
+
+
+## Setup 
+
+The base stack is already running, `docker compose up` give me Postgres and open WebUI:
+
+```yaml
+services:
+  postgres:
+    image: 'pgvector/pgvector:pg17'
+    environment:
+      - 'POSTGRES_DB=appname'
+      - 'POSTGRES_USER=myuser'
+      - 'POSTGRES_PASSWORD=secret'
+    ports:
+      - '5440:5432'
+
+  webui:
+    image: ghcr.io/open-webui/open-webui:v0.10.2
+    environment:
+      - 'OPENAI_API_BASE_URL=http://host.docker.internal:8080/api/v1'
+      - 'OPENAI_API_KEY=magic-key'
+      - 'WEBUI_AUTH=false'
+    ports:
+      - '3000:8080'
+```
+
+the backend is custom made with springbootn, at such it will run outside the compose file, on `:8080`, so open WebUI just see it as "OpenAI". No custom frontend, no custom protocol, I get file upload, chat memory, model switch for free.
+
+What's missing from this picture is the actual data layer. Superset isn't in the compose file yet, and it point at its own Postgres (or whatever warehouse holds the real KPI tables), completely separate from the `backend` database above. Mixing the two would defeat the purpose: the knowledge-base Postgres is for the chatbot's own memory, the KPI database is the source of truth the chart has to stay honest to.
+
+## Wiring Superset In
+
+Srpingboot already has the plumbing to let a model call an external service without me writing bespoke Java for every endpoint: point it at an OpenAPI spec, and it turn every operation into a callable tool. Superset expose a full REST API (`/api/v1/chart`, `/api/v1/dashboard`, `/api/v1/chart/{id}/data`), so instead of writing a `SupersetTools` class by hand, the plan is to let the same OpenAPI-discovery mechanism pick it up:
+
+```java
+// same contract the backernd already speaks for any toolserver:
+// GET {url}/openapi.json (or /v3/api-docs) -> one tool per path+method,
+// name = operationId, inputSchema resolved from parameters + request body.
+```
+
+# Implementing 
+
+
+
+
+
+# Conclusion
+
+Concretely, the tool I actually want the model to have isn't "run arbitrary SQL", it's "list existing charts" and "fetch chart N". The chart already exists in Superset because a human built the query and validated the numbers, the LLM's only decision is which one answers the question in front of it. If no chart fits, the answer is "I don't have that data", not a chart invented on the spot.
+
+So the flow becomes:
+
+1. Human write and validates the SQL in Superset, saves it as a chart.
+2. Spring discovers Superset's chart-listing endpoint as a tool (`superset_getCharts`, `superset_getChartData`).
+3. User ask a question in open WebUI.
+4. The model calls `superset_getCharts`, matches the question against the chart titles/descriptions, and calls `superset_getChartData` for the right one.
+5. spring hands the result (a real, pre-verified data payload, or an embeddable chart URL) back into the conversation.
+

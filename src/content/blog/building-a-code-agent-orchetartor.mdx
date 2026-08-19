@@ -1,18 +1,18 @@
 ---
-title: "Building CodeMachine: A Multi-Agent AI Workflow Orchestrator in Java Spring Boot"
+title: "Building Jmachine: A Multi-Agent AI Workflow Orchestrator in Java Spring Boot"
 description: "What I learned building an AI workflow orchestrator"
 date: 2026-08-01
 tags: ["AI", "SpringBoot", "Exploration"]
 category: "project"
 draft: false
 ---
-# Building CodeMachine: A Multi-Agent AI Workflow Orchestrator in Java Spring Boot
+# Building Jmachine: A Multi-Agent AI Workflow Orchestrator in Java Spring Boot
 
 ## From TypeScript to Enterprise Java: A Port Story
 
-What happens when you take a modern TypeScript AI workflow orchestrator and rebuild it from scratch in Java Spring Boot? You get **CodeMachine** — a production-ready, enterprise-grade multi-agent orchestration framework that brings the power of coordinated AI agents to the JVM ecosystem.
+What happens when you take a modern TypeScript AI workflow orchestrator and rebuild it from scratch in Java Spring Boot? You get **Jmachine** — a production-ready, enterprise-grade multi-agent orchestration framework that brings the power of coordinated AI agents to the JVM ecosystem.
 
-This is the story of building CodeMachine: from initial design decisions through advanced features like loop-on-failure, conditional execution, and MCP protocol integration, all backed by a comprehensive test suite with 92% pass rate.
+This is the story of building Jmachine: from initial design decisions through advanced features like loop-on-failure, conditional execution, and MCP protocol integration, all backed by a comprehensive test suite with 92% pass rate.
 
 ---
 
@@ -31,13 +31,13 @@ Without orchestration, this becomes chaos:
 - **No observability**: You can't see what's happening in real-time
 - **No recovery**: Crash means starting over from scratch
 
-Sound familiar? That's where CodeMachine comes in.
+Sound familiar? That's where Jmachine comes in.
 
 ---
 
 ## The Solution: Declarative Multi-Agent Orchestration
 
-CodeMachine lets you define complex AI workflows as simple JSON templates:
+Jmachine lets you define complex AI workflows as simple JSON templates:
 
 ```json
 {
@@ -74,7 +74,7 @@ CodeMachine lets you define complex AI workflows as simple JSON templates:
 
 Run it:
 ```bash
-java -jar codemachine-cli.jar run pipeline.json
+java -jar Jmachine-cli.jar run pipeline.json
 ```
 
 Get real-time TUI output showing each agent's progress, streaming LLM responses, and workflow state.
@@ -86,15 +86,15 @@ Get real-time TUI output showing each agent's progress, streaming LLM responses,
 ### Multi-Module Maven Project
 
 ```
-codemachine-parent/
-├── codemachine-core/      # Workflow engine + Spring AI
-├── codemachine-cli/       # CLI + Lanterna TUI  
-└── codemachine-starter/   # Spring Boot auto-config
+Jmachine-parent/
+├── Jmachine-core/      # Workflow engine + Spring AI
+├── Jmachine-cli/       # CLI + Lanterna TUI  
+└── Jmachine-starter/   # Spring Boot auto-config
 ```
 
 **Why this structure?**
 - **Separation of concerns**: Core logic independent of CLI
-- **Embeddable**: Use CodeMachine in your own Spring Boot apps
+- **Embeddable**: Use Jmachine in your own Spring Boot apps
 - **Testable**: Mock dependencies at module boundaries
 
 ### Tech Stack Decisions
@@ -242,13 +242,13 @@ Run different test suites via CLI flag:
 
 ```bash
 # Quick feedback: unit tests only
-java -jar codemachine-cli.jar run --track unit-tests workflow.json
+java -jar Jmachine-cli.jar run --track unit-tests workflow.json
 
 # Pre-commit: integration tests
-java -jar codemachine-cli.jar run --track integration-tests workflow.json
+java -jar Jmachine-cli.jar run --track integration-tests workflow.json
 
 # Nightly: full suite
-java -jar codemachine-cli.jar run --track full-suite workflow.json
+java -jar Jmachine-cli.jar run --track full-suite workflow.json
 ```
 
 Template:
@@ -319,7 +319,7 @@ public class MCPService {
 Workflow interrupted? Just resume:
 
 ```bash
-java -jar codemachine-cli.jar resume
+java -jar Jmachine-cli.jar resume
 ```
 
 Output:
@@ -779,7 +779,7 @@ Lanterna TUI vs plain console output:
 
 - [ ] **Visual workflow editor**: Drag-and-drop workflow creation
 - [ ] **Agent marketplace**: Share and discover reusable agents
-- [ ] **Cloud deployment**: Managed CodeMachine hosting
+- [ ] **Cloud deployment**: Managed Jmachine hosting
 - [ ] **Multi-LLM routing**: Route tasks to optimal model
 
 ---
@@ -791,14 +791,14 @@ Lanterna TUI vs plain console output:
 ```bash
 # Clone repo
 git clone https://github.com/A-N-O-D-E-R/Jmachine
-cd codemachine-parent
+cd Jmachine-parent
 
 # Build
 mvn clean package -DskipTests
 
 # Run example
 export AWS_REGION=us-east-1
-java -jar codemachine-cli/target/codemachine-cli-1.0.0-SNAPSHOT.jar \
+java -jar Jmachine-cli/target/Jmachine-cli-1.0.0-SNAPSHOT.jar \
   run example-workflow/hello.workflow.json
 ```
 
@@ -838,14 +838,14 @@ Complete Java code with comments.
 
 **3. Run:**
 ```bash
-java -jar codemachine-cli.jar run my-workflow.json
+java -jar Jmachine-cli.jar run my-workflow.json
 ```
 
 ---
 
 ## Conclusion
 
-Building CodeMachine taught me that **orchestration is where the magic happens**. Individual AI agents are powerful, but coordinated agents are transformative.
+Building Jmachine taught me that **orchestration is where the magic happens**. Individual AI agents are powerful, but coordinated agents are transformative.
 
 **Key takeaways:**
 1. **Declarative beats imperative** for workflow definition
@@ -854,7 +854,7 @@ Building CodeMachine taught me that **orchestration is where the magic happens**
 4. **Testing is investment** not cost (92% coverage = confidence)
 5. **Spring ecosystem delivers** for enterprise Java
 
-The future of AI coding isn't a single super-agent—it's **specialized agents working together**, each doing what they do best, orchestrated by systems like CodeMachine.
+The future of AI coding isn't a single super-agent—it's **specialized agents working together**, each doing what they do best, orchestrated by systems like Jmachine.
 
 ---
 
@@ -867,6 +867,6 @@ The future of AI coding isn't a single super-agent—it's **specialized agents w
   - [MCP Integration Guide](MCP_GUIDE.md)
   - [Workflow Template Spec](WORKFLOW_SPEC.md)
 - **Examples**: [example-workflow/](example-workflow/)
-- **Discord**: [discord.gg/codemachine](https://discord.gg/codemachine)
+- **Discord**: [discord.gg/Jmachine](https://discord.gg/Jmachine)
 
 ---
